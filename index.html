@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Días Entre Fechas Gratis | ConfiguroWeb</title>
+    <meta name="description" content="Calcula cuantos dias, meses y años hay entre dos fechas. Suma o resta dias a una fecha concreta. Gratis.">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <span class="text-xl font-bold text-indigo-600">Configuro<span class="text-slate-900">Web</span></span>
+            <a href="https://configuroweb.com/tag/gratis" class="text-sm font-medium text-slate-600 hover:text-indigo-600">← Volver a Apps Gratuitas</a>
+        </div>
+    </header>
+    <main class="max-w-2xl mx-auto px-4 py-8 flex-grow w-full">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Calculadora de Días Entre Fechas</h1>
+            <p class="text-slate-500 text-sm">Calcula la diferencia entre dos fechas y suma o resta días.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs mb-6">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Fecha inicial</label>
+                    <input type="date" id="date1" class="w-full px-3 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">Fecha final</label>
+                    <input type="date" id="date2" class="w-full px-3 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+            <button onclick="calculate()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl cursor-pointer">Calcular diferencia</button>
+        </div>
+
+        <div id="results" class="hidden space-y-6 mb-8">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 rounded-2xl text-center">
+                <p class="text-sm uppercase tracking-wider opacity-80 mb-2">Diferencia total</p>
+                <p id="totalDays" class="text-5xl font-extrabold mb-2">0</p>
+                <p class="text-sm opacity-90">días</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-white border border-slate-200 rounded-xl p-4 text-center">
+                    <p id="resYears" class="text-2xl font-extrabold text-indigo-600">0</p>
+                    <p class="text-xs text-slate-500 uppercase mt-1">Años</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-4 text-center">
+                    <p id="resMonths" class="text-2xl font-extrabold text-indigo-600">0</p>
+                    <p class="text-xs text-slate-500 uppercase mt-1">Meses</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl p-4 text-center">
+                    <p id="resWeeks" class="text-2xl font-extrabold text-indigo-600">0</p>
+                    <p class="text-xs text-slate-500 uppercase mt-1">Semanas</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+            <p class="text-xs font-medium text-slate-700 mb-3 uppercase">Sumar / Restar días a una fecha</p>
+            <div class="flex gap-3 mb-3">
+                <input type="date" id="dateBase" class="flex-1 px-3 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+                <input type="number" id="daysAdd" value="30" class="w-24 px-3 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <button onclick="addDays()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 rounded-xl text-sm cursor-pointer">Calcular</button>
+            <p id="addResult" class="hidden mt-4 text-center text-lg font-bold text-indigo-600 bg-indigo-50 rounded-xl py-3"></p>
+        </div>
+    </main>
+    <footer class="bg-white border-t border-slate-200 mt-12">
+        <div class="max-w-5xl mx-auto px-4 py-6 text-center text-xs text-slate-400">&copy; 2026 ConfiguroWeb.</div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date1').value = today;
+            document.getElementById('date2').value = today;
+            document.getElementById('dateBase').value = today;
+        });
+
+        function calculate() {
+            const d1 = new Date(document.getElementById('date1').value);
+            const d2 = new Date(document.getElementById('date2').value);
+            if (isNaN(d1) || isNaN(d2)) return;
+
+            const diffMs = Math.abs(d2 - d1);
+            const days = Math.floor(diffMs / (1000*60*60*24));
+            const weeks = Math.floor(days / 7);
+            
+            let years = d2.getFullYear() - d1.getFullYear();
+            let months = d2.getMonth() - d1.getMonth();
+            if (d2.getDate() < d1.getDate()) months--;
+            if (months < 0) { years--; months += 12; }
+            years = Math.abs(years); months = Math.abs(months);
+
+            document.getElementById('totalDays').innerText = days.toLocaleString('es-CO');
+            document.getElementById('resYears').innerText = years;
+            document.getElementById('resMonths').innerText = months;
+            document.getElementById('resWeeks').innerText = weeks.toLocaleString('es-CO');
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function addDays() {
+            const base = new Date(document.getElementById('dateBase').value);
+            const days = parseInt(document.getElementById('daysAdd').value);
+            if (isNaN(base) || isNaN(days)) return;
+            base.setDate(base.getDate() + days);
+            const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const el = document.getElementById('addResult');
+            el.classList.remove('hidden');
+            el.innerText = `📅 ${base.toLocaleDateString('es-CO', opts)}`;
+        }
+    </script>
+</body>
+</html>
